@@ -4,7 +4,7 @@ import MinigameList from "./components/MinigameList";
 import ThemeSwitchable from "./components/ThemeSwitchable";
 import { Routes, Route } from "react-router-dom";
 import GamePlay from "./components/GamePlay";
-import NotFound from "./components/NotFound";
+import IncorrectPage from "./components/IncorrectPage";
 
 export default function App() {
   return (
@@ -14,7 +14,7 @@ export default function App() {
           <Route index element={<MinigameList />} />
           <Route path="/:id" element={<GamePlay />} />
         </Route>
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<IncorrectPage />} />
       </Routes>
     </ChakraProvider>
   );
