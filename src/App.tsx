@@ -1,19 +1,24 @@
 import React from "react";
-import "./App.css";
-import { ChakraProvider, theme, Box, Grid } from "@chakra-ui/react";
-import { ColorModeSwitcher } from "./ColorModeSwitcher";
+import { ChakraProvider, theme } from "@chakra-ui/react";
+import MinigameList from "./components/MinigameList";
+import ThemeSwitchable from "./components/ThemeSwitchable";
+import MinigameListItem from "./components/MinigameListItem";
+import logo from "./logo.svg";
 
-function App() {
+export default function App() {
   return (
     <ChakraProvider theme={theme}>
-      <Box textAlign="center" fontSize="xl">
-        <Grid minH="100vh" p={3}>
-          <ColorModeSwitcher justifySelf="flex-end" />
-          Hello there.
-        </Grid>
-      </Box>
+      <ThemeSwitchable>
+        <MinigameList>
+          <MinigameListItem name="PatrickKR" logo={logo} />
+          <MinigameListItem name="PatrickKR" logo={logo} />
+          <MinigameListItem name="PatrickKR" logo={logo} />
+          <MinigameListItem name="PatrickKR" logo={logo} />
+          <MinigameListItem name="PatrickKR" logo={logo} />
+          <MinigameListItem name="PatrickKR" logo={logo} />
+          <MinigameListItem name="PatrickKR" logo={logo} />
+        </MinigameList>
+      </ThemeSwitchable>
     </ChakraProvider>
   );
 }
-
-export default App;
