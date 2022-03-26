@@ -1,17 +1,14 @@
 import { Box, Grid } from "@chakra-ui/react";
 import ColorModeSwitcher from "./ColorModeSwitcher";
 import React from "react";
+import { Outlet } from "react-router-dom";
 
-type ThemeSwitchableProps = {
-  children: React.ReactNode;
-};
-
-export default function ThemeSwitchable(props: ThemeSwitchableProps) {
+export default function ThemeSwitchable() {
   return (
     <Box textAlign="center" fontSize="xl">
       <Grid minH="100vh" p={3}>
         <ColorModeSwitcher justifySelf="flex-end" />
-        {props.children}
+        <Outlet />
       </Grid>
     </Box>
   );

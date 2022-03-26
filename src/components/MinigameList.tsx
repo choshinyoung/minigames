@@ -1,15 +1,19 @@
 import { Center, Wrap } from "@chakra-ui/react";
 import React from "react";
+import MinigameListItem from "./MinigameListItem";
+import logo from "../logo.svg";
 
-type MinigameListProps = {
-  children: React.ReactNode;
-};
-
-export default function MinigameList(props: MinigameListProps) {
+export default function MinigameList() {
   return (
     <Center minH="95vh">
       <Wrap maxW="700px" spacing="25px" justify="center">
-        {props.children}
+        <MinigameListItem name="PatrickKR" logo={logo} />
+        <MinigameListItem name="PatrickKR" logo={logo} />
+        <MinigameListItem name="PatrickKR" logo={logo} />
+        <MinigameListItem name="PatrickKR" logo={logo} />
+        <MinigameListItem name="PatrickKR" logo={logo} />
+        <MinigameListItem name="PatrickKR" logo={logo} />
+        <MinigameListItem name="PatrickKR" logo={logo} />
       </Wrap>
     </Center>
   );
