@@ -1,4 +1,4 @@
-import { Heading } from "@chakra-ui/react";
+import { AspectRatio, Center } from "@chakra-ui/react";
 
 import { minigame } from "../minigames";
 
@@ -7,5 +7,11 @@ type GamePlayProps = {
 };
 
 export default function GamePlay(props: GamePlayProps) {
-  return <Heading>Wa! {props.game.name}!</Heading>;
+  return (
+    <Center height="90vh">
+      <AspectRatio bgColor="tomato" maxW="750px" w="95vw" ratio={1}>
+        {props.game.component()}
+      </AspectRatio>
+    </Center>
+  );
 }

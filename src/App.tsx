@@ -15,7 +15,11 @@ export default function App() {
         <Route element={<ThemeSwitchable />}>
           <Route index element={<MinigameList />} />
           {minigames.map((g) => (
-            <Route path={`/${g.id}`} element={<GamePlay game={g} />} />
+            <Route
+              key={g.id}
+              path={`/${g.id}`}
+              element={<GamePlay game={g} />}
+            />
           ))}
         </Route>
         <Route path="*" element={<IncorrectPage />} />

@@ -1,17 +1,19 @@
+import MineSweeper from "./mingames/MineSweeper";
+
 import logo from "./logo.svg";
 
 export type minigame = {
   id: string;
   name: string;
   logo: string;
-  component: (() => JSX.Element) | null;
+  component: () => JSX.Element;
 };
 
 export const minigames: minigame[] = [
   {
-    id: "patrickKR",
-    name: "PatrickKR",
+    id: "minesweeper",
+    name: "지뢰찾기",
     logo: logo,
-    component: null,
+    component: MineSweeper,
   },
 ];

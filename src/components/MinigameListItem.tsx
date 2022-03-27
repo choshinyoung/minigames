@@ -12,7 +12,7 @@ export default function MinigameListItem(props: MinigameListItemProps) {
     <Link to={`/${props.game.id}`}>
       <Button w="150px" h="180px" {...props}>
         <VStack spacing="15px">
-          <Image src={props.game.logo} w="90vw" draggable={false} />
+          <Image src={props.game.logo} draggable={false} />
           <Text>{props.game.name}</Text>
         </VStack>
       </Button>
