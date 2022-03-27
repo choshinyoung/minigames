@@ -1,10 +1,12 @@
-import React from "react";
 import { ChakraProvider, theme } from "@chakra-ui/react";
+import { Routes, Route } from "react-router-dom";
+
 import MinigameList from "./components/MinigameList";
 import ThemeSwitchable from "./components/ThemeSwitchable";
-import { Routes, Route } from "react-router-dom";
 import GamePlay from "./components/GamePlay";
 import IncorrectPage from "./components/IncorrectPage";
+
+import { minigames } from "./minigames";
 
 export default function App() {
   return (
@@ -12,7 +14,9 @@ export default function App() {
       <Routes>
         <Route element={<ThemeSwitchable />}>
           <Route index element={<MinigameList />} />
-          <Route path="/:id" element={<GamePlay />} />
+          {minigames.map((g) => (
+            <Route path={`/${g.id}`} element={<GamePlay game={g} />} />
+          ))}
         </Route>
         <Route path="*" element={<IncorrectPage />} />
       </Routes>

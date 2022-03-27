@@ -1,13 +1,13 @@
 import logo from "./logo.svg";
 
-export type Game = {
+export type minigame = {
   id: string;
   name: string;
   logo: string;
   component: (() => JSX.Element) | null;
 };
 
-export const Games: Game[] = [
+export const minigames: minigame[] = [
   {
     id: "patrickKR",
     name: "PatrickKR",

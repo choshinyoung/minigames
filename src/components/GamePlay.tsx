@@ -1,17 +1,11 @@
 import { Heading } from "@chakra-ui/react";
-import { useParams } from "react-router-dom";
-import { Games } from "../Games";
-import GameNotFound from "./GameNotFound";
 
-export default function GamePlay() {
-  const id = useParams().id!;
+import { minigame } from "../minigames";
 
-  const findResult = Games.find((g) => g.id === id);
-  if (findResult === undefined) {
-    return <GameNotFound id={id} />;
-  }
+type GamePlayProps = {
+  game: minigame;
+};
 
-  const game = findResult!;
-
-  return <Heading>Wa! {game.name}!</Heading>;
+export default function GamePlay(props: GamePlayProps) {
+  return <Heading>Wa! {props.game.name}!</Heading>;
 }

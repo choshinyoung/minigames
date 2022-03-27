@@ -1,10 +1,10 @@
 import { Button, ButtonProps, Image, Text, VStack } from "@chakra-ui/react";
-import React from "react";
-import { Game } from "../Games";
 import { Link } from "react-router-dom";
 
+import { minigame } from "../minigames";
+
 type MinigameListItemProps = ButtonProps & {
-  game: Game;
+  game: minigame;
 };
 
 export default function MinigameListItem(props: MinigameListItemProps) {
