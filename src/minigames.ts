@@ -1,4 +1,4 @@
-import MineSweeper from "./mingames/MineSweeper";
+import MineSweeper from "./minigames/MineSweeper";
 
 import logo from "./logo.svg";
 
