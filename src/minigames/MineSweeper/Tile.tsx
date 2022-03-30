@@ -9,27 +9,61 @@ type TileProps = {
 
 export default function Tile(props: TileProps) {
   function onClick() {
-    if (props.tile.isOpen) {
-      return;
-    }
-
     props.openTile(props.tile.y, props.tile.x);
   }
 
   return (
+    <If condition={props.tile.isOpen}>
+      <AspectRatio
+        bgColor="blackAlpha.100"
+        color={
+          props.tile.value === 0
+            ? "blackAlpha.100"
+            : props.tile.value === -1
+            ? "red.300"
+            : props.tile.value === 1
+            ? "blue.300"
+            : props.tile.value === 2
+            ? "green.300"
+            : props.tile.value === 3
+            ? "orange.300"
+            : "yellow.300"
+        }
+        ratio={1}
+      >
+        <If condition={props.tile.value !== 0}>
+          <Text>{props.tile.value}</Text>
+        </If>
+      </AspectRatio>
+      <AspectRatio
+        bgColor="blackAlpha.300"
+        ratio={1}
+        cursor="pointer"
+        onClick={onClick}
+      >
+        <></>
+      </AspectRatio>
+    </If>
+  );
+}
+
+/*
+
     <AspectRatio
-      bgColor={
+      color={
         !props.tile.isOpen
-          ? "blackAlpha.100"
-          : props.tile.value === 0
           ? "blackAlpha.300"
+          : props.tile.value === 0
+          ? "blackAlpha.100"
           : props.tile.value === -1
-          ? "red.200"
+          ? "red.100"
           : props.tile.value === 1
-          ? "blue.200"
+          ? "blue.100"
           : props.tile.value === 2
-          ? "green.200"
-          : "yellow.200"
+          ? "green.100"
+          : props.tile.value === 3
+          ? "orange.100"
+          : "yellow.100"
       }
       ratio={1}
       cursor={props.tile.isOpen ? "" : "pointer"}
@@ -39,5 +73,4 @@ export default function Tile(props: TileProps) {
         <Text>{props.tile.value}</Text>
       </If>
     </AspectRatio>
-  );
-}
+ */

@@ -73,7 +73,36 @@ export default function MineSweeper() {
   }
 
   function openTile(y: number, x: number) {
-    map[y][x].isOpen = true;
+    const _openTile = (y: number, x: number) => {
+      map[y][x].isOpen = true;
+
+      if (map[y][x].value !== 0) {
+        return;
+      }
+
+      if (y !== 0 && map[y - 1][x].value !== -1 && !map[y - 1][x].isOpen) {
+        _openTile(y - 1, x);
+      }
+      if (x !== 0 && map[y][x - 1].value !== -1 && !map[y][x - 1].isOpen) {
+        _openTile(y, x - 1);
+      }
+      if (
+        y !== map.length - 1 &&
+        map[y + 1][x].value !== -1 &&
+        !map[y + 1][x].isOpen
+      ) {
+        _openTile(y + 1, x);
+      }
+      if (
+        x !== map.length - 1 &&
+        map[y][x + 1].value !== -1 &&
+        !map[y][x + 1].isOpen
+      ) {
+        _openTile(y, x + 1);
+      }
+    };
+
+    _openTile(y, x);
 
     setMap([...map]);
   }
