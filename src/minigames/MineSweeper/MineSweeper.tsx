@@ -1,22 +1,35 @@
-import { AspectRatio, SimpleGrid, Text, VStack } from "@chakra-ui/react";
+import { SimpleGrid, VStack } from "@chakra-ui/react";
 import { useState } from "react";
-import GamePlayHeader from "../components/GamePlayHeader";
+import GamePlayHeader from "../../components/GamePlayHeader";
+import Tile from "./Tile";
+
+export type tileData = {
+  x: number;
+  y: number;
+  value: number;
+  isOpen: boolean;
+};
 
 export default function MineSweeper() {
   const [map, setMap] = useState(generateMap());
 
-  function generateMap(): number[][] {
-    const map: number[][] = Array(15)
+  function generateMap(): tileData[][] {
+    const map: tileData[][] = Array(15)
       .fill(null)
-      .map(() =>
+      .map((_, i) =>
         Array(15)
           .fill(null)
-          .map(() => (Math.random() < 0.1 ? -1 : 0))
+          .map((_, j) => ({
+            y: i,
+            x: j,
+            value: Math.random() < 0.1 ? -1 : 0,
+            isOpen: false,
+          }))
       );
 
     for (let y = 0; y < map.length; y++) {
       for (let x = 0; x < map.length; x++) {
-        if (map[y][x] === -1) {
+        if (map[y][x].value === -1) {
           continue;
         }
 
@@ -36,21 +49,21 @@ export default function MineSweeper() {
               continue;
             }
 
-            if (map[y + ly][x + lx] === -1) {
+            if (map[y + ly][x + lx].value === -1) {
               count++;
             }
           }
         }
 
-        map[y][x] = count;
+        map[y][x].value = count;
       }
     }
 
     return map;
   }
 
-  function renderMap(): number[] {
-    let result: number[] = [];
+  function renderMap(): tileData[] {
+    let result: tileData[] = [];
 
     map.forEach((m) => {
       result = result.concat(m);
@@ -59,28 +72,18 @@ export default function MineSweeper() {
     return result;
   }
 
+  function openTile(y: number, x: number) {
+    map[y][x].isOpen = true;
+
+    setMap([...map]);
+  }
+
   return (
     <VStack spacing={0}>
       <GamePlayHeader />
       <SimpleGrid w="100%" columns={15} spacing={1}>
         {renderMap().map((tile, i) => (
-          <AspectRatio
-            key={i}
-            bgColor={
-              tile === 0
-                ? "blackAlpha.100"
-                : tile === -1
-                ? "red.200"
-                : tile === 1
-                ? "blue.200"
-                : tile === 2
-                ? "green.200"
-                : "yellow.200"
-            }
-            ratio={1}
-          >
-            <Text>{tile}</Text>
-          </AspectRatio>
+          <Tile key={i} tile={tile} openTile={openTile} />
         ))}
       </SimpleGrid>
     </VStack>
