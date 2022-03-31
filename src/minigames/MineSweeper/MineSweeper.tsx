@@ -1,6 +1,6 @@
-import { SimpleGrid, VStack } from "@chakra-ui/react";
+import { Center, SimpleGrid, VStack } from "@chakra-ui/react";
 import { useState } from "react";
-import GamePlayHeader from "../../components/GamePlayHeader";
+import Header from "../../components/Header";
 import Tile from "./Tile";
 
 export type tileData = {
@@ -11,9 +11,46 @@ export type tileData = {
 };
 
 export default function MineSweeper() {
-  const [map, setMap] = useState(generateMap());
+  const [isMapGenerated, setIsMapGenerated] = useState<boolean>(false);
+  const [map, setMap] = useState<tileData[][]>(generateEmptyMap());
 
-  function generateMap(): tileData[][] {
+  const [mineCount, setMineCount] = useState(0);
+
+  function generateEmptyMap(): tileData[][] {
+    return Array(15)
+      .fill(null)
+      .map((_, i) =>
+        Array(15)
+          .fill(null)
+          .map((_, j) => ({
+            y: i,
+            x: j,
+            value: 0,
+            isOpen: false,
+          }))
+      );
+  }
+
+  function generateMap(
+    x: number,
+    y: number
+  ): { map: tileData[][]; mineCount: number } {
+    let mineCount = 0;
+
+    const generateValue = (lx: number, ly: number) => {
+      if (Math.abs(x - lx) <= 1 && Math.abs(y - ly) <= 1) {
+        return 0;
+      }
+
+      const value = Math.random() < 0.1 ? -1 : 0;
+
+      if (value === -1) {
+        mineCount++;
+      }
+
+      return value;
+    };
+
     const map: tileData[][] = Array(15)
       .fill(null)
       .map((_, i) =>
@@ -22,7 +59,7 @@ export default function MineSweeper() {
           .map((_, j) => ({
             y: i,
             x: j,
-            value: Math.random() < 0.1 ? -1 : 0,
+            value: generateValue(j, i),
             isOpen: false,
           }))
       );
@@ -59,7 +96,7 @@ export default function MineSweeper() {
       }
     }
 
-    return map;
+    return { map, mineCount };
   }
 
   function renderMap(): tileData[] {
@@ -72,44 +109,65 @@ export default function MineSweeper() {
     return result;
   }
 
-  function openTile(y: number, x: number) {
-    const _openTile = (y: number, x: number) => {
-      map[y][x].isOpen = true;
+  function openTile(x: number, y: number) {
+    let newMap = map;
 
-      if (map[y][x].value !== 0) {
+    if (!isMapGenerated) {
+      const generationResult = generateMap(x, y);
+      newMap = generationResult.map;
+
+      setIsMapGenerated(true);
+      setMineCount(generationResult.mineCount);
+    }
+
+    const _openTile = (x: number, y: number) => {
+      newMap[y][x].isOpen = true;
+
+      if (newMap[y][x].value !== 0) {
         return;
       }
 
-      if (y !== 0 && map[y - 1][x].value !== -1 && !map[y - 1][x].isOpen) {
-        _openTile(y - 1, x);
-      }
-      if (x !== 0 && map[y][x - 1].value !== -1 && !map[y][x - 1].isOpen) {
-        _openTile(y, x - 1);
+      if (
+        y !== 0 &&
+        newMap[y - 1][x].value !== -1 &&
+        !newMap[y - 1][x].isOpen
+      ) {
+        _openTile(x, y - 1);
       }
       if (
-        y !== map.length - 1 &&
-        map[y + 1][x].value !== -1 &&
-        !map[y + 1][x].isOpen
+        x !== 0 &&
+        newMap[y][x - 1].value !== -1 &&
+        !newMap[y][x - 1].isOpen
       ) {
-        _openTile(y + 1, x);
+        _openTile(x - 1, y);
       }
       if (
-        x !== map.length - 1 &&
-        map[y][x + 1].value !== -1 &&
-        !map[y][x + 1].isOpen
+        y !== newMap.length - 1 &&
+        newMap[y + 1][x].value !== -1 &&
+        !newMap[y + 1][x].isOpen
       ) {
-        _openTile(y, x + 1);
+        _openTile(x, y + 1);
+      }
+      if (
+        x !== newMap.length - 1 &&
+        newMap[y][x + 1].value !== -1 &&
+        !newMap[y][x + 1].isOpen
+      ) {
+        _openTile(x + 1, y);
       }
     };
 
-    _openTile(y, x);
+    _openTile(x, y);
 
-    setMap([...map]);
+    setMap([...newMap]);
   }
 
   return (
     <VStack spacing={0}>
-      <GamePlayHeader />
+      <Header>
+        <Center>Mine Count: {mineCount}</Center>
+        <Center>This is Header</Center>
+      </Header>
       <SimpleGrid w="100%" columns={15} spacing={1}>
         {renderMap().map((tile, i) => (
           <Tile key={i} tile={tile} openTile={openTile} />

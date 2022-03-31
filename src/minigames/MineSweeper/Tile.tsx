@@ -9,7 +9,7 @@ type TileProps = {
 
 export default function Tile(props: TileProps) {
   function onClick() {
-    props.openTile(props.tile.y, props.tile.x);
+    props.openTile(props.tile.x, props.tile.y);
   }
 
   return (
