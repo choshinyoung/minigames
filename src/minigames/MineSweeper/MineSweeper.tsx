@@ -11,16 +11,20 @@ export type tileData = {
 };
 
 export default function MineSweeper() {
+  const configs = {
+    size: 20,
+  };
+
   const [isMapGenerated, setIsMapGenerated] = useState<boolean>(false);
   const [map, setMap] = useState<tileData[][]>(generateEmptyMap());
 
   const [mineCount, setMineCount] = useState(0);
 
   function generateEmptyMap(): tileData[][] {
-    return Array(15)
+    return Array(configs.size)
       .fill(null)
       .map((_, i) =>
-        Array(15)
+        Array(configs.size)
           .fill(null)
           .map((_, j) => ({
             y: i,
@@ -51,10 +55,10 @@ export default function MineSweeper() {
       return value;
     };
 
-    const map: tileData[][] = Array(15)
+    const map: tileData[][] = Array(configs.size)
       .fill(null)
       .map((_, i) =>
-        Array(15)
+        Array(configs.size)
           .fill(null)
           .map((_, j) => ({
             y: i,
@@ -166,9 +170,8 @@ export default function MineSweeper() {
     <VStack spacing={0}>
       <Header>
         <Center>Mine Count: {mineCount}</Center>
-        <Center>This is Header</Center>
       </Header>
-      <SimpleGrid w="100%" columns={15} spacing={1}>
+      <SimpleGrid w="100%" columns={configs.size} spacing={1}>
         {renderMap().map((tile, i) => (
           <Tile key={i} tile={tile} openTile={openTile} />
         ))}
