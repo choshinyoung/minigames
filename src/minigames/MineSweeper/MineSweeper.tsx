@@ -13,6 +13,7 @@ export type tileData = {
 export default function MineSweeper() {
   const configs = {
     size: 20,
+    mineCount: 40,
   };
 
   const [isMapGenerated, setIsMapGenerated] = useState<boolean>(false);
@@ -35,38 +36,27 @@ export default function MineSweeper() {
       );
   }
 
-  function generateMap(
-    x: number,
-    y: number
-  ): { map: tileData[][]; mineCount: number } {
+  function generateMap(x: number, y: number): tileData[][] {
     let mineCount = 0;
 
-    const generateValue = (lx: number, ly: number) => {
+    const map: tileData[][] = generateEmptyMap();
+
+    while (mineCount < configs.mineCount) {
+      const lx = Math.round(Math.random() * (configs.size - 1)),
+        ly = Math.round(Math.random() * (configs.size - 1));
+
+      if (map[ly][lx].value === -1) {
+        continue;
+      }
+
       if (Math.abs(x - lx) <= 1 && Math.abs(y - ly) <= 1) {
-        return 0;
+        continue;
       }
 
-      const value = Math.random() < 0.1 ? -1 : 0;
+      map[ly][lx].value = -1;
 
-      if (value === -1) {
-        mineCount++;
-      }
-
-      return value;
-    };
-
-    const map: tileData[][] = Array(configs.size)
-      .fill(null)
-      .map((_, i) =>
-        Array(configs.size)
-          .fill(null)
-          .map((_, j) => ({
-            y: i,
-            x: j,
-            value: generateValue(j, i),
-            isOpen: false,
-          }))
-      );
+      mineCount++;
+    }
 
     for (let y = 0; y < map.length; y++) {
       for (let x = 0; x < map.length; x++) {
@@ -100,7 +90,7 @@ export default function MineSweeper() {
       }
     }
 
-    return { map, mineCount };
+    return map;
   }
 
   function renderMap(): tileData[] {
@@ -117,11 +107,10 @@ export default function MineSweeper() {
     let newMap = map;
 
     if (!isMapGenerated) {
-      const generationResult = generateMap(x, y);
-      newMap = generationResult.map;
+      newMap = generateMap(x, y);
 
       setIsMapGenerated(true);
-      setMineCount(generationResult.mineCount);
+      setMineCount(configs.mineCount);
     }
 
     const _openTile = (x: number, y: number) => {
