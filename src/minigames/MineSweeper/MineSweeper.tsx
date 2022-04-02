@@ -1,19 +1,21 @@
-import { Center, SimpleGrid, VStack } from "@chakra-ui/react";
+import { Center, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 import Header from "../../components/Header";
 import Tile from "./Tile";
+import { FaFlag } from "react-icons/fa";
 
 export type tileData = {
   x: number;
   y: number;
   value: number;
   isOpen: boolean;
+  isMarked: boolean;
 };
 
 export default function MineSweeper() {
   const configs = {
-    size: 20,
-    mineCount: 40,
+    size: 10,
+    mineCount: 10,
   };
 
   const [isMapGenerated, setIsMapGenerated] = useState<boolean>(false);
@@ -32,6 +34,7 @@ export default function MineSweeper() {
             x: j,
             value: 0,
             isOpen: false,
+            isMarked: false,
           }))
       );
   }
@@ -120,33 +123,24 @@ export default function MineSweeper() {
         return;
       }
 
-      if (
-        y !== 0 &&
-        newMap[y - 1][x].value !== -1 &&
-        !newMap[y - 1][x].isOpen
-      ) {
-        _openTile(x, y - 1);
-      }
-      if (
-        x !== 0 &&
-        newMap[y][x - 1].value !== -1 &&
-        !newMap[y][x - 1].isOpen
-      ) {
-        _openTile(x - 1, y);
-      }
-      if (
-        y !== newMap.length - 1 &&
-        newMap[y + 1][x].value !== -1 &&
-        !newMap[y + 1][x].isOpen
-      ) {
-        _openTile(x, y + 1);
-      }
-      if (
-        x !== newMap.length - 1 &&
-        newMap[y][x + 1].value !== -1 &&
-        !newMap[y][x + 1].isOpen
-      ) {
-        _openTile(x + 1, y);
+      for (let ly = -1; ly <= 1; ly++) {
+        if ((ly === -1 && y === 0) || (ly === 1 && y === map.length - 1)) {
+          continue;
+        }
+
+        for (let lx = -1; lx <= 1; lx++) {
+          if (
+            (lx === -1 && x === 0) ||
+            (lx === 1 && x === map.length - 1) ||
+            (lx === 0 && ly === 0)
+          ) {
+            continue;
+          }
+
+          if (!newMap[y + ly][x + lx].isOpen) {
+            _openTile(x + lx, y + ly);
+          }
+        }
       }
     };
 
@@ -155,14 +149,37 @@ export default function MineSweeper() {
     setMap([...newMap]);
   }
 
+  function markTile(x: number, y: number) {
+    map[y][x].isMarked = true;
+
+    setMap([...map]);
+    setMineCount(mineCount - 1);
+  }
+
+  function unmarkTile(x: number, y: number) {
+    map[y][x].isMarked = false;
+
+    setMap([...map]);
+    setMineCount(mineCount + 1);
+  }
+
   return (
     <VStack spacing={0}>
       <Header>
-        <Center>Mine Count: {mineCount}</Center>
+        <Center>
+          <FaFlag />
+          <Text ml={3}>{mineCount}</Text>
+        </Center>
       </Header>
       <SimpleGrid w="100%" columns={configs.size} spacing={1}>
         {renderMap().map((tile, i) => (
-          <Tile key={i} tile={tile} openTile={openTile} />
+          <Tile
+            key={i}
+            tile={tile}
+            openTile={openTile}
+            markTile={markTile}
+            unmarkTile={unmarkTile}
+          />
         ))}
       </SimpleGrid>
     </VStack>
