@@ -110,7 +110,7 @@ export default function MineSweeper() {
   }
 
   function openTile(x: number, y: number) {
-    if (gamePlayContext.isGameOver) {
+    if (gamePlayContext.isGameEnded) {
       return;
     }
 
@@ -125,6 +125,12 @@ export default function MineSweeper() {
 
     if (newMap[y][x].value === -1) {
       gamePlayContext.gameOver();
+    } else if (
+      mineCount === 0 &&
+      getOpenedTilesCount() ===
+        configs.size * configs.size - configs.mineCount - 1
+    ) {
+      gamePlayContext.win();
     }
 
     const _openTile = (x: number, y: number) => {
@@ -161,14 +167,38 @@ export default function MineSweeper() {
   }
 
   function markTile(x: number, y: number, isMarking: boolean) {
-    if (gamePlayContext.isGameOver) {
+    if (gamePlayContext.isGameEnded) {
       return;
     }
 
     map[y][x].isMarked = isMarking;
 
+    console.log(mineCount);
+    console.log(getOpenedTilesCount());
+
+    if (
+      mineCount === 1 &&
+      getOpenedTilesCount() === configs.size * configs.size - configs.mineCount
+    ) {
+      gamePlayContext.win();
+    }
+
     setMap([...map]);
-    setMineCount(mineCount - 1);
+    setMineCount(mineCount + (isMarking ? -1 : 1));
+  }
+
+  function getOpenedTilesCount() {
+    let count = 0;
+
+    map.forEach((row) =>
+      row.forEach((tile) => {
+        if (tile.isOpen) {
+          count++;
+        }
+      })
+    );
+
+    return count;
   }
 
   return (

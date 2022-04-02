@@ -17,8 +17,9 @@ type GamePlayContextType =
         difficulty: difficulty;
       };
       setSize: (size: windowSize) => void;
-      isGameOver: boolean;
+      isGameEnded: boolean;
       gameOver: () => void;
+      win: () => void;
     }
   | undefined;
 
@@ -30,25 +31,32 @@ export default function GamePlay(props: GamePlayProps) {
     difficulty: difficulty.normal,
   });
 
-  const [isGameOver, setIsGameOver] = useState(false);
+  const [isGameEnded, setIsGameEnded] = useState(false);
+  const [gameResult, setGameResult] = useState<boolean | null>(null);
 
   function setSize(size: windowSize) {
     setConfigs({ ...configs, windowSize: size });
   }
 
   function gameOver() {
-    setIsGameOver(true);
+    setIsGameEnded(true);
+    setGameResult(false);
+  }
+
+  function win() {
+    setIsGameEnded(true);
+    setGameResult(true);
   }
 
   return (
     <GamePlayContext.Provider
-      value={{ configs, setSize, isGameOver, gameOver }}
+      value={{ configs, setSize, isGameEnded, gameOver, win }}
     >
       <Center height="90vh">
         <Box maxW={getWindowSize(configs.windowSize)} w="95vw">
           {createElement(props.game.component)}
         </Box>
-        <If condition={isGameOver}>
+        <If condition={gameResult === false}>
           <Box
             maxW={getWindowSize(configs.windowSize)}
             w="95vw"
@@ -58,6 +66,18 @@ export default function GamePlay(props: GamePlayProps) {
             position="absolute"
           >
             <Center>YOU DIED</Center>
+          </Box>
+        </If>
+        <If condition={gameResult === true}>
+          <Box
+            maxW={getWindowSize(configs.windowSize)}
+            w="95vw"
+            padding={0}
+            bgColor="#AAAAAAAA"
+            color="red"
+            position="absolute"
+          >
+            <Center>YOU WON</Center>
           </Box>
         </If>
       </Center>

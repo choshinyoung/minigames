@@ -58,7 +58,7 @@ export default function Tile(props: TileProps) {
           cursor="pointer"
           onContextMenu={toggleIsMarked}
         >
-          <FaFlag color="black" />
+          <FaFlag />
         </AspectRatio>
         <AspectRatio
           bgColor="blackAlpha.300"
