@@ -6,8 +6,7 @@ import { FaBomb, FaFlag } from "react-icons/fa";
 type TileProps = {
   tile: tileData;
   openTile: (y: number, x: number) => void;
-  markTile: (y: number, x: number) => void;
-  unmarkTile: (y: number, x: number) => void;
+  markTile: (y: number, x: number, isMarking: boolean) => void;
 };
 
 export default function Tile(props: TileProps) {
@@ -18,11 +17,7 @@ export default function Tile(props: TileProps) {
   function toggleIsMarked(event: any) {
     preventRightClick(event);
 
-    if (props.tile.isMarked) {
-      props.unmarkTile(props.tile.x, props.tile.y);
-    } else {
-      props.markTile(props.tile.x, props.tile.y);
-    }
+    props.markTile(props.tile.x, props.tile.y, !props.tile.isMarked);
   }
 
   function preventRightClick(event: any) {

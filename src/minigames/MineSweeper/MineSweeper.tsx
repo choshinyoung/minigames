@@ -1,8 +1,9 @@
 import { Center, SimpleGrid, Text, VStack } from "@chakra-ui/react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Header from "../../components/Header";
 import Tile from "./Tile";
 import { FaFlag } from "react-icons/fa";
+import { GamePlayContext } from "../../components/GamePlay";
 
 export type tileData = {
   x: number;
@@ -14,9 +15,11 @@ export type tileData = {
 
 export default function MineSweeper() {
   const configs = {
-    size: 10,
-    mineCount: 10,
+    size: 20,
+    mineCount: 40,
   };
+
+  const gamePlayContext = useContext(GamePlayContext)!;
 
   const [isMapGenerated, setIsMapGenerated] = useState<boolean>(false);
   const [map, setMap] = useState<tileData[][]>(generateEmptyMap());
@@ -107,6 +110,10 @@ export default function MineSweeper() {
   }
 
   function openTile(x: number, y: number) {
+    if (gamePlayContext.isGameOver) {
+      return;
+    }
+
     let newMap = map;
 
     if (!isMapGenerated) {
@@ -114,6 +121,10 @@ export default function MineSweeper() {
 
       setIsMapGenerated(true);
       setMineCount(configs.mineCount);
+    }
+
+    if (newMap[y][x].value === -1) {
+      gamePlayContext.gameOver();
     }
 
     const _openTile = (x: number, y: number) => {
@@ -149,18 +160,15 @@ export default function MineSweeper() {
     setMap([...newMap]);
   }
 
-  function markTile(x: number, y: number) {
-    map[y][x].isMarked = true;
+  function markTile(x: number, y: number, isMarking: boolean) {
+    if (gamePlayContext.isGameOver) {
+      return;
+    }
+
+    map[y][x].isMarked = isMarking;
 
     setMap([...map]);
     setMineCount(mineCount - 1);
-  }
-
-  function unmarkTile(x: number, y: number) {
-    map[y][x].isMarked = false;
-
-    setMap([...map]);
-    setMineCount(mineCount + 1);
   }
 
   return (
@@ -173,13 +181,7 @@ export default function MineSweeper() {
       </Header>
       <SimpleGrid w="100%" columns={configs.size} spacing={1}>
         {renderMap().map((tile, i) => (
-          <Tile
-            key={i}
-            tile={tile}
-            openTile={openTile}
-            markTile={markTile}
-            unmarkTile={unmarkTile}
-          />
+          <Tile key={i} tile={tile} openTile={openTile} markTile={markTile} />
         ))}
       </SimpleGrid>
     </VStack>

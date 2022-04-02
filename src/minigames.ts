@@ -11,7 +11,7 @@ export type minigame = {
 
 export const minigames: minigame[] = [
   {
-    id: "minesweeper",
+    id: "MineSweeper",
     name: "지뢰찾기",
     logo: logo,
     component: MineSweeper,
