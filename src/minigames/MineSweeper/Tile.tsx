@@ -1,4 +1,4 @@
-import { AspectRatio, Text } from "@chakra-ui/react";
+import { AspectRatio, Icon, Text } from "@chakra-ui/react";
 import If from "../../components/If";
 import { tileData } from "./MineSweeper";
 import { FaBomb, FaFlag } from "react-icons/fa";
@@ -47,7 +47,7 @@ export default function Tile(props: TileProps) {
         <If condition={props.tile.value !== 0}>
           <If condition={props.tile.value !== -1}>
             <Text fontSize="sm">{props.tile.value}</Text>
-            <FaBomb />
+            <Icon as={FaBomb} p="3px" />
           </If>
         </If>
       </AspectRatio>
@@ -58,7 +58,7 @@ export default function Tile(props: TileProps) {
           cursor="pointer"
           onContextMenu={toggleIsMarked}
         >
-          <FaFlag />
+          <Icon as={FaFlag} p="3px" />
         </AspectRatio>
         <AspectRatio
           bgColor="blackAlpha.300"

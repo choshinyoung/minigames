@@ -1,4 +1,4 @@
-import { Center, SimpleGrid, Text, VStack } from "@chakra-ui/react";
+import { Center, Icon, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { useContext, useState } from "react";
 import Header from "../../components/Header";
 import Tile from "./Tile";
@@ -202,8 +202,8 @@ export default function MineSweeper() {
     <VStack spacing={0}>
       <Header>
         <Center>
-          <FaFlag />
-          <Text ml={3}>{mineCount}</Text>
+          <Icon as={FaFlag} p="3px" />
+          <Text p={2}>{mineCount}</Text>
         </Center>
       </Header>
       <SimpleGrid w="100%" columns={configs.size} spacing={1}>
