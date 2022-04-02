@@ -173,9 +173,6 @@ export default function MineSweeper() {
 
     map[y][x].isMarked = isMarking;
 
-    console.log(mineCount);
-    console.log(getOpenedTilesCount());
-
     if (
       mineCount === 1 &&
       getOpenedTilesCount() === configs.size * configs.size - configs.mineCount
