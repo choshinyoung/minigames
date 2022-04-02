@@ -202,7 +202,7 @@ export default function MineSweeper() {
     <VStack spacing={0}>
       <Header>
         <Center>
-          <Icon as={FaFlag} p="3px" />
+          <Icon as={FaFlag} p="4px" />
           <Text p={2}>{mineCount}</Text>
         </Center>
       </Header>
