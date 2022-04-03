@@ -2,8 +2,9 @@ import { Center, Icon, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { useContext, useState } from "react";
 import Header from "../../components/Header";
 import Tile from "./Tile";
-import { FaFlag } from "react-icons/fa";
+import { FaClock, FaFlag } from "react-icons/fa";
 import { GamePlayContext } from "../../components/GamePlay";
+import { gameStates } from "../../lib/gameStates";
 
 export type tileData = {
   x: number;
@@ -21,7 +22,6 @@ export default function MineSweeper() {
 
   const gamePlayContext = useContext(GamePlayContext)!;
 
-  const [isMapGenerated, setIsMapGenerated] = useState<boolean>(false);
   const [map, setMap] = useState<tileData[][]>(generateEmptyMap());
 
   const [mineCount, setMineCount] = useState(0);
@@ -110,17 +110,18 @@ export default function MineSweeper() {
   }
 
   function openTile(x: number, y: number) {
-    if (gamePlayContext.isGameEnded) {
+    if (gamePlayContext.gameState === gameStates.ended) {
       return;
     }
 
     let newMap = map;
 
-    if (!isMapGenerated) {
+    if (gamePlayContext.gameState === gameStates.idle) {
       newMap = generateMap(x, y);
 
-      setIsMapGenerated(true);
       setMineCount(configs.mineCount);
+
+      gamePlayContext.startGame();
     }
 
     if (newMap[y][x].value === -1) {
@@ -167,7 +168,7 @@ export default function MineSweeper() {
   }
 
   function markTile(x: number, y: number, isMarking: boolean) {
-    if (gamePlayContext.isGameEnded) {
+    if (gamePlayContext.gameState !== gameStates.playing) {
       return;
     }
 
@@ -204,6 +205,13 @@ export default function MineSweeper() {
         <Center>
           <Icon as={FaFlag} p="4px" />
           <Text p={2}>{mineCount}</Text>
+        </Center>
+        <Center>
+          <Icon as={FaClock} p="4px" />
+          <Text p={2}>
+            {Math.floor(gamePlayContext.timer / 60)} :{" "}
+            {gamePlayContext.timer % 60}
+          </Text>
         </Center>
       </Header>
       <SimpleGrid w="100%" columns={configs.size} spacing={1}>

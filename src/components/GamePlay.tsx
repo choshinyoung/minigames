@@ -1,10 +1,17 @@
-import { Box, Center } from "@chakra-ui/react";
+import { Box, Center, Icon, Text, useColorModeValue } from "@chakra-ui/react";
 
 import { minigame } from "../minigames";
 import { getWindowSize, windowSize } from "../lib/windowSize";
-import React, { createContext, createElement, useState } from "react";
+import React, {
+  createContext,
+  createElement,
+  useEffect,
+  useState,
+} from "react";
 import { difficulty } from "../lib/difficulty";
 import If from "./If";
+import { gameStates } from "../lib/gameStates";
+import { FaClock } from "react-icons/fa";
 
 type GamePlayProps = {
   game: minigame;
@@ -17,9 +24,11 @@ type GamePlayContextType =
         difficulty: difficulty;
       };
       setSize: (size: windowSize) => void;
-      isGameEnded: boolean;
+      gameState: gameStates;
+      startGame: () => void;
       gameOver: () => void;
       win: () => void;
+      timer: number;
     }
   | undefined;
 
@@ -29,28 +38,53 @@ export default function GamePlay(props: GamePlayProps) {
   const [configs, setConfigs] = useState({
     windowSize: windowSize.medium,
     difficulty: difficulty.normal,
+    isTimerEnabled: true,
   });
 
-  const [isGameEnded, setIsGameEnded] = useState(false);
+  const [gameState, setGameState] = useState(gameStates.idle);
   const [gameResult, setGameResult] = useState<boolean | null>(null);
+
+  const [timer, setTimer] = useState(0);
 
   function setSize(size: windowSize) {
     setConfigs({ ...configs, windowSize: size });
   }
 
+  function startGame() {
+    setGameState(gameStates.playing);
+  }
+
   function gameOver() {
-    setIsGameEnded(true);
+    setGameState(gameStates.ended);
     setGameResult(false);
   }
 
   function win() {
-    setIsGameEnded(true);
+    setGameState(gameStates.ended);
     setGameResult(true);
   }
 
+  useEffect(() => {
+    if (configs.isTimerEnabled && gameState === gameStates.playing) {
+      const timerId = setInterval(() => {
+        setTimer(timer + 1);
+      }, 1000);
+
+      return () => clearInterval(timerId);
+    }
+  });
+
   return (
     <GamePlayContext.Provider
-      value={{ configs, setSize, isGameEnded, gameOver, win }}
+      value={{
+        configs,
+        setSize,
+        gameState,
+        startGame,
+        gameOver,
+        win,
+        timer,
+      }}
     >
       <Center height="90vh">
         <Box maxW={getWindowSize(configs.windowSize)} w="95vw">
@@ -59,25 +93,33 @@ export default function GamePlay(props: GamePlayProps) {
         <If condition={gameResult === false}>
           <Box
             maxW={getWindowSize(configs.windowSize)}
-            w="95vw"
+            w="250px"
             padding={0}
-            bgColor="#AAAAAAAA"
-            color="red"
+            bgColor={useColorModeValue("white", "gray.700")}
+            borderRadius={5}
             position="absolute"
           >
-            <Center>YOU DIED</Center>
+            <Text fontSize="2xl">GAME OVER!</Text>
           </Box>
         </If>
         <If condition={gameResult === true}>
           <Box
             maxW={getWindowSize(configs.windowSize)}
-            w="95vw"
+            w="300px"
             padding={0}
-            bgColor="#AAAAAAAA"
-            color="red"
+            bgColor={useColorModeValue("white", "gray.700")}
+            borderRadius={5}
             position="absolute"
           >
-            <Center>YOU WON</Center>
+            <Text fontSize="2xl">YOU WIN!</Text>
+            <If condition={configs.isTimerEnabled}>
+              <Center>
+                <Icon as={FaClock} p="4px" />
+                <Text p={2}>
+                  {Math.floor(timer / 60)} : {timer % 60}
+                </Text>
+              </Center>
+            </If>
           </Box>
         </If>
       </Center>
