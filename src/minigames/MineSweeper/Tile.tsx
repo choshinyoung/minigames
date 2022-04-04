@@ -1,4 +1,4 @@
-import { AspectRatio, Icon, Text } from "@chakra-ui/react";
+import { AspectRatio, Icon, Text, useColorModeValue } from "@chakra-ui/react";
 import If from "../../components/If";
 import { tileData } from "./MineSweeper";
 import { FaBomb, FaFlag } from "react-icons/fa";
@@ -53,7 +53,7 @@ export default function Tile(props: TileProps) {
       </AspectRatio>
       <If condition={props.tile.isMarked}>
         <AspectRatio
-          bgColor="blackAlpha.300"
+          bgColor={useColorModeValue("blackAlpha.300", "blackAlpha.400")}
           ratio={1}
           cursor="pointer"
           onContextMenu={toggleIsMarked}
@@ -61,7 +61,7 @@ export default function Tile(props: TileProps) {
           <Icon as={FaFlag} color="teal.400" p="4px" />
         </AspectRatio>
         <AspectRatio
-          bgColor="blackAlpha.300"
+          bgColor={useColorModeValue("blackAlpha.300", "blackAlpha.400")}
           ratio={1}
           cursor="pointer"
           onClick={openTile}

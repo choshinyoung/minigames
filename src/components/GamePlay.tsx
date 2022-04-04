@@ -1,4 +1,11 @@
-import { Box, Center, Icon, Text, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Center,
+  Icon,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 
 import { minigame } from "../minigames";
 import { getWindowSize, windowSize } from "../lib/windowSize";
@@ -64,6 +71,10 @@ export default function GamePlay(props: GamePlayProps) {
     setGameResult(true);
   }
 
+  function replay() {
+    window.location.reload();
+  }
+
   useEffect(() => {
     if (configs.isTimerEnabled && gameState === gameStates.playing) {
       const timerId = setInterval(() => {
@@ -95,11 +106,17 @@ export default function GamePlay(props: GamePlayProps) {
             maxW={getWindowSize(configs.windowSize)}
             w="250px"
             padding={0}
-            bgColor={useColorModeValue("white", "gray.700")}
+            bgColor={useColorModeValue("blackAlpha.200", "blackAlpha.500")}
+            backdropFilter="auto"
+            backdropBlur="2px"
             borderRadius={5}
             position="absolute"
+            p={3}
           >
             <Text fontSize="2xl">GAME OVER!</Text>
+            <Button marginTop={3} onClick={replay} variant="outline">
+              Try Again
+            </Button>
           </Box>
         </If>
         <If condition={gameResult === true}>
@@ -107,9 +124,12 @@ export default function GamePlay(props: GamePlayProps) {
             maxW={getWindowSize(configs.windowSize)}
             w="300px"
             padding={0}
-            bgColor={useColorModeValue("white", "gray.700")}
+            bgColor={useColorModeValue("blackAlpha.200", "blackAlpha.500")}
+            backdropFilter="auto"
+            backdropBlur="2px"
             borderRadius={5}
             position="absolute"
+            p={3}
           >
             <Text fontSize="2xl">YOU WIN!</Text>
             <If condition={configs.isTimerEnabled}>
@@ -120,6 +140,9 @@ export default function GamePlay(props: GamePlayProps) {
                 </Text>
               </Center>
             </If>
+            <Button marginTop={3} onClick={replay} variant="outline">
+              Play Again
+            </Button>
           </Box>
         </If>
       </Center>
