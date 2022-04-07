@@ -98,9 +98,7 @@ export default function GamePlay(props: GamePlayProps) {
       }}
     >
       <Center height="90vh">
-        <Box maxW={getWindowSize(configs.windowSize)} w="95vw">
-          {createElement(props.game.component)}
-        </Box>
+        {createElement(props.game.component)}
         <If condition={gameResult === false}>
           <Box
             maxW={getWindowSize(configs.windowSize)}

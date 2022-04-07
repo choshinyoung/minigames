@@ -1,10 +1,11 @@
-import { Center, Icon, SimpleGrid, Text, VStack } from "@chakra-ui/react";
+import { Box, Center, Icon, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { useContext, useState } from "react";
 import Header from "../../components/Header";
 import Tile from "./Tile";
 import { FaClock, FaFlag } from "react-icons/fa";
 import { GamePlayContext } from "../../components/GamePlay";
 import { gameStates } from "../../lib/gameStates";
+import { getWindowSize } from "../../lib/windowSize";
 
 export type tileData = {
   x: number;
@@ -16,8 +17,8 @@ export type tileData = {
 
 export default function MineSweeper() {
   const configs = {
-    size: 20,
-    mineCount: 40,
+    size: { w: 20, h: 30 },
+    mineCount: 60,
   };
 
   const gamePlayContext = useContext(GamePlayContext)!;
@@ -27,10 +28,10 @@ export default function MineSweeper() {
   const [mineCount, setMineCount] = useState(0);
 
   function generateEmptyMap(): tileData[][] {
-    return Array(configs.size)
+    return Array(configs.size.h)
       .fill(null)
       .map((_, i) =>
-        Array(configs.size)
+        Array(configs.size.w)
           .fill(null)
           .map((_, j) => ({
             y: i,
@@ -48,8 +49,8 @@ export default function MineSweeper() {
     const map: tileData[][] = generateEmptyMap();
 
     while (mineCount < configs.mineCount) {
-      const lx = Math.round(Math.random() * (configs.size - 1)),
-        ly = Math.round(Math.random() * (configs.size - 1));
+      const lx = Math.round(Math.random() * (configs.size.w - 1)),
+        ly = Math.round(Math.random() * (configs.size.h - 1));
 
       if (map[ly][lx].value === -1) {
         continue;
@@ -64,8 +65,8 @@ export default function MineSweeper() {
       mineCount++;
     }
 
-    for (let y = 0; y < map.length; y++) {
-      for (let x = 0; x < map.length; x++) {
+    for (let y = 0; y < configs.size.h; y++) {
+      for (let x = 0; x < configs.size.w; x++) {
         if (map[y][x].value === -1) {
           continue;
         }
@@ -73,14 +74,17 @@ export default function MineSweeper() {
         let count = 0;
 
         for (let ly = -1; ly <= 1; ly++) {
-          if ((ly === -1 && y === 0) || (ly === 1 && y === map.length - 1)) {
+          if (
+            (ly === -1 && y === 0) ||
+            (ly === 1 && y === configs.size.h - 1)
+          ) {
             continue;
           }
 
           for (let lx = -1; lx <= 1; lx++) {
             if (
               (lx === -1 && x === 0) ||
-              (lx === 1 && x === map.length - 1) ||
+              (lx === 1 && x === configs.size.w - 1) ||
               (lx === 0 && ly === 0)
             ) {
               continue;
@@ -129,7 +133,7 @@ export default function MineSweeper() {
     } else if (
       mineCount === 0 &&
       getOpenedTilesCount() ===
-        configs.size * configs.size - configs.mineCount - 1
+        configs.size.w * configs.size.h - configs.mineCount - 1
     ) {
       gamePlayContext.win();
     }
@@ -149,7 +153,7 @@ export default function MineSweeper() {
         for (let lx = -1; lx <= 1; lx++) {
           if (
             (lx === -1 && x === 0) ||
-            (lx === 1 && x === map.length - 1) ||
+            (lx === 1 && x === map[y + ly].length - 1) ||
             (lx === 0 && ly === 0)
           ) {
             continue;
@@ -176,7 +180,8 @@ export default function MineSweeper() {
 
     if (
       mineCount === 1 &&
-      getOpenedTilesCount() === configs.size * configs.size - configs.mineCount
+      getOpenedTilesCount() ===
+        configs.size.w * configs.size.h - configs.mineCount
     ) {
       gamePlayContext.win();
     }
@@ -200,25 +205,27 @@ export default function MineSweeper() {
   }
 
   return (
-    <VStack spacing={0}>
-      <Header>
-        <Center>
-          <Icon as={FaFlag} p="4px" />
-          <Text p={2}>{mineCount}</Text>
-        </Center>
-        <Center>
-          <Icon as={FaClock} p="4px" />
-          <Text p={2}>
-            {Math.floor(gamePlayContext.timer / 60)} :{" "}
-            {gamePlayContext.timer % 60}
-          </Text>
-        </Center>
-      </Header>
-      <SimpleGrid w="100%" columns={configs.size} spacing={1}>
-        {renderMap().map((tile, i) => (
-          <Tile key={i} tile={tile} openTile={openTile} markTile={markTile} />
-        ))}
-      </SimpleGrid>
-    </VStack>
+    <Box maxW={getWindowSize(gamePlayContext.configs.windowSize)} w="95vw">
+      <VStack spacing={0}>
+        <Header>
+          <Center>
+            <Icon as={FaFlag} p="4px" />
+            <Text p={2}>{mineCount}</Text>
+          </Center>
+          <Center>
+            <Icon as={FaClock} p="4px" />
+            <Text p={2}>
+              {Math.floor(gamePlayContext.timer / 60)} :{" "}
+              {gamePlayContext.timer % 60}
+            </Text>
+          </Center>
+        </Header>
+        <SimpleGrid w="100%" columns={configs.size.w} spacing={1}>
+          {renderMap().map((tile, i) => (
+            <Tile key={i} tile={tile} openTile={openTile} markTile={markTile} />
+          ))}
+        </SimpleGrid>
+      </VStack>
+    </Box>
   );
 }
