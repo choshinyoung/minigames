@@ -8,7 +8,6 @@ import {
 } from "@chakra-ui/react";
 
 import { minigame } from "../minigames";
-import { getWindowSize, windowSize } from "../lib/windowSize";
 import React, {
   createContext,
   createElement,
@@ -27,10 +26,8 @@ type GamePlayProps = {
 type GamePlayContextType =
   | {
       configs: {
-        windowSize: windowSize;
         difficulty: difficulty;
       };
-      setSize: (size: windowSize) => void;
       gameState: gameStates;
       startGame: () => void;
       gameOver: () => void;
@@ -43,7 +40,6 @@ export const GamePlayContext = createContext<GamePlayContextType>(undefined);
 
 export default function GamePlay(props: GamePlayProps) {
   const [configs, setConfigs] = useState({
-    windowSize: windowSize.medium,
     difficulty: difficulty.normal,
     isTimerEnabled: true,
   });
@@ -52,10 +48,6 @@ export default function GamePlay(props: GamePlayProps) {
   const [gameResult, setGameResult] = useState<boolean | null>(null);
 
   const [timer, setTimer] = useState(0);
-
-  function setSize(size: windowSize) {
-    setConfigs({ ...configs, windowSize: size });
-  }
 
   function startGame() {
     setGameState(gameStates.playing);
@@ -89,7 +81,6 @@ export default function GamePlay(props: GamePlayProps) {
     <GamePlayContext.Provider
       value={{
         configs,
-        setSize,
         gameState,
         startGame,
         gameOver,
@@ -101,7 +92,6 @@ export default function GamePlay(props: GamePlayProps) {
         {createElement(props.game.component)}
         <If condition={gameResult === false}>
           <Box
-            maxW={getWindowSize(configs.windowSize)}
             w="250px"
             padding={0}
             bgColor={useColorModeValue("blackAlpha.200", "blackAlpha.500")}
@@ -119,7 +109,6 @@ export default function GamePlay(props: GamePlayProps) {
         </If>
         <If condition={gameResult === true}>
           <Box
-            maxW={getWindowSize(configs.windowSize)}
             w="300px"
             padding={0}
             bgColor={useColorModeValue("blackAlpha.200", "blackAlpha.500")}

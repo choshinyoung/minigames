@@ -5,7 +5,7 @@ import Tile from "./Tile";
 import { FaClock, FaFlag } from "react-icons/fa";
 import { GamePlayContext } from "../../components/GamePlay";
 import { gameStates } from "../../lib/gameStates";
-import { getWindowSize } from "../../lib/windowSize";
+import { useWindowSizeValue } from "../../utils";
 
 export type tileData = {
   x: number;
@@ -17,8 +17,8 @@ export type tileData = {
 
 export default function MineSweeper() {
   const configs = {
-    size: { w: 20, h: 30 },
-    mineCount: 60,
+    size: useWindowSizeValue({ w: 10, h: 10 }, { w: 8, h: 13 }),
+    mineCount: 10,
   };
 
   const gamePlayContext = useContext(GamePlayContext)!;
@@ -205,7 +205,7 @@ export default function MineSweeper() {
   }
 
   return (
-    <Box maxW={getWindowSize(gamePlayContext.configs.windowSize)} w="95vw">
+    <Box maxW="550px" w="95vw">
       <VStack spacing={0}>
         <Header>
           <Center>
@@ -220,7 +220,7 @@ export default function MineSweeper() {
             </Text>
           </Center>
         </Header>
-        <SimpleGrid w="100%" columns={configs.size.w} spacing={1}>
+        <SimpleGrid w="100%" columns={configs.size.w} spacing={0.5}>
           {renderMap().map((tile, i) => (
             <Tile key={i} tile={tile} openTile={openTile} markTile={markTile} />
           ))}
