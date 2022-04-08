@@ -1,10 +1,19 @@
-import { Box, Center, Icon, SimpleGrid, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Center,
+  Icon,
+  Select,
+  SimpleGrid,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { useContext, useState } from "react";
 import Header from "../../components/Header";
 import Tile from "./Tile";
 import { FaClock, FaFlag } from "react-icons/fa";
 import { GamePlayContext } from "../../components/GamePlay";
 import { gameStates } from "../../lib/gameStates";
+import { difficulty } from "../../lib/difficulty";
 import { useWindowSizeValue } from "../../utils";
 
 export type tileData = {
@@ -16,12 +25,23 @@ export type tileData = {
 };
 
 export default function MineSweeper() {
-  const configs = {
-    size: useWindowSizeValue({ w: 10, h: 10 }, { w: 8, h: 13 }),
-    mineCount: 10,
-  };
-
   const gamePlayContext = useContext(GamePlayContext)!;
+
+  const smallSize = useWindowSizeValue({ w: 10, h: 10 }, { w: 8, h: 13 });
+  const normalSize = useWindowSizeValue({ w: 20, h: 20 }, { w: 16, h: 25 });
+
+  const configs = {
+    size:
+      gamePlayContext.configs.difficulty === difficulty.easy
+        ? smallSize
+        : normalSize,
+    mineCount:
+      gamePlayContext.configs.difficulty === difficulty.easy
+        ? 10
+        : gamePlayContext.configs.difficulty === difficulty.normal
+        ? 50
+        : 70,
+  };
 
   const [map, setMap] = useState<tileData[][]>(generateEmptyMap());
 
@@ -204,13 +224,20 @@ export default function MineSweeper() {
     return count;
   }
 
+  function setDifficulty(selected: any) {
+    gamePlayContext.setDifficulty(selected.target.value);
+  }
+
   return (
     <Box maxW="550px" w="95vw">
       <VStack spacing={0}>
         <Header>
-          <Center>
-            <Icon as={FaFlag} p="4px" />
-            <Text p={2}>{mineCount}</Text>
+          <Center w="100px">
+            <Select onChange={setDifficulty}>
+              <option value={difficulty.easy}>easy</option>
+              <option value={difficulty.normal}>normal</option>
+              <option value={difficulty.hard}>hard</option>
+            </Select>
           </Center>
           <Center>
             <Icon as={FaClock} p="4px" />
@@ -218,6 +245,10 @@ export default function MineSweeper() {
               {Math.floor(gamePlayContext.timer / 60)} :{" "}
               {gamePlayContext.timer % 60}
             </Text>
+          </Center>
+          <Center>
+            <Icon as={FaFlag} p="4px" />
+            <Text p={2}>{mineCount}</Text>
           </Center>
         </Header>
         <SimpleGrid w="100%" columns={configs.size.w} spacing={0.5}>

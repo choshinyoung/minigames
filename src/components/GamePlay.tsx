@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  Center,
-  Icon,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react";
+import { Button, Center, Icon, Text } from "@chakra-ui/react";
 
 import { minigame } from "../minigames";
 import React, {
@@ -18,6 +11,7 @@ import { difficulty } from "../lib/difficulty";
 import If from "./If";
 import { gameStates } from "../lib/gameStates";
 import { FaClock } from "react-icons/fa";
+import Popup from "./Popup";
 
 type GamePlayProps = {
   game: minigame;
@@ -28,6 +22,7 @@ type GamePlayContextType =
       configs: {
         difficulty: difficulty;
       };
+      setDifficulty: (difficulty: difficulty) => void;
       gameState: gameStates;
       startGame: () => void;
       gameOver: () => void;
@@ -67,6 +62,12 @@ export default function GamePlay(props: GamePlayProps) {
     window.location.reload();
   }
 
+  function setDifficulty(difficulty: difficulty) {
+    setConfigs({ ...configs, difficulty });
+
+    console.log(difficulty);
+  }
+
   useEffect(() => {
     if (configs.isTimerEnabled && gameState === gameStates.playing) {
       const timerId = setInterval(() => {
@@ -81,6 +82,7 @@ export default function GamePlay(props: GamePlayProps) {
     <GamePlayContext.Provider
       value={{
         configs,
+        setDifficulty,
         gameState,
         startGame,
         gameOver,
@@ -91,33 +93,15 @@ export default function GamePlay(props: GamePlayProps) {
       <Center height="90vh">
         {createElement(props.game.component)}
         <If condition={gameResult === false}>
-          <Box
-            w="250px"
-            padding={0}
-            bgColor={useColorModeValue("blackAlpha.200", "blackAlpha.500")}
-            backdropFilter="auto"
-            backdropBlur="2px"
-            borderRadius={5}
-            position="absolute"
-            p={3}
-          >
+          <Popup>
             <Text fontSize="2xl">GAME OVER!</Text>
             <Button marginTop={3} onClick={replay} variant="outline">
               Try Again
             </Button>
-          </Box>
+          </Popup>
         </If>
         <If condition={gameResult === true}>
-          <Box
-            w="300px"
-            padding={0}
-            bgColor={useColorModeValue("blackAlpha.200", "blackAlpha.500")}
-            backdropFilter="auto"
-            backdropBlur="2px"
-            borderRadius={5}
-            position="absolute"
-            p={3}
-          >
+          <Popup>
             <Text fontSize="2xl">YOU WIN!</Text>
             <If condition={configs.isTimerEnabled}>
               <Center>
@@ -130,7 +114,7 @@ export default function GamePlay(props: GamePlayProps) {
             <Button marginTop={3} onClick={replay} variant="outline">
               Play Again
             </Button>
-          </Box>
+          </Popup>
         </If>
       </Center>
     </GamePlayContext.Provider>
