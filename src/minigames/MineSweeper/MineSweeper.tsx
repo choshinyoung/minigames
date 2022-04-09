@@ -28,7 +28,7 @@ export default function MineSweeper() {
   const gamePlayContext = useContext(GamePlayContext)!;
 
   const smallSize = useWindowSizeValue({ w: 10, h: 10 }, { w: 8, h: 13 });
-  const normalSize = useWindowSizeValue({ w: 20, h: 20 }, { w: 16, h: 25 });
+  const normalSize = useWindowSizeValue({ w: 17, h: 17 }, { w: 14, h: 21 });
 
   const configs = {
     size:
@@ -39,8 +39,8 @@ export default function MineSweeper() {
       gamePlayContext.configs.difficulty === difficulty.easy
         ? 10
         : gamePlayContext.configs.difficulty === difficulty.normal
-        ? 50
-        : 70,
+        ? 30
+        : 50,
   };
 
   const [map, setMap] = useState<tileData[][]>(generateEmptyMap());
@@ -150,12 +150,6 @@ export default function MineSweeper() {
 
     if (newMap[y][x].value === -1) {
       gamePlayContext.gameOver();
-    } else if (
-      mineCount === 0 &&
-      getOpenedTilesCount() ===
-        configs.size.w * configs.size.h - configs.mineCount - 1
-    ) {
-      gamePlayContext.win();
     }
 
     const _openTile = (x: number, y: number) => {
@@ -179,7 +173,10 @@ export default function MineSweeper() {
             continue;
           }
 
-          if (!newMap[y + ly][x + lx].isOpen) {
+          if (
+            !newMap[y + ly][x + lx].isOpen &&
+            !newMap[y + ly][x + lx].isMarked
+          ) {
             _openTile(x + lx, y + ly);
           }
         }
@@ -189,6 +186,14 @@ export default function MineSweeper() {
     _openTile(x, y);
 
     setMap([...newMap]);
+
+    if (
+      mineCount === 0 &&
+      getOpenedTilesCount() ===
+        configs.size.w * configs.size.h - configs.mineCount
+    ) {
+      gamePlayContext.win();
+    }
   }
 
   function markTile(x: number, y: number, isMarking: boolean) {
@@ -198,6 +203,9 @@ export default function MineSweeper() {
 
     map[y][x].isMarked = isMarking;
 
+    setMap([...map]);
+    setMineCount(mineCount + (isMarking ? -1 : 1));
+
     if (
       mineCount === 1 &&
       getOpenedTilesCount() ===
@@ -205,9 +213,6 @@ export default function MineSweeper() {
     ) {
       gamePlayContext.win();
     }
-
-    setMap([...map]);
-    setMineCount(mineCount + (isMarking ? -1 : 1));
   }
 
   function getOpenedTilesCount() {

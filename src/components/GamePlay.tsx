@@ -35,7 +35,7 @@ export const GamePlayContext = createContext<GamePlayContextType>(undefined);
 
 export default function GamePlay(props: GamePlayProps) {
   const [configs, setConfigs] = useState({
-    difficulty: difficulty.normal,
+    difficulty: difficulty.easy,
     isTimerEnabled: true,
   });
 
