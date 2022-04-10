@@ -36,13 +36,19 @@ export const GamePlayContext = createContext<GamePlayContextType>(undefined);
 export default function GamePlay(props: GamePlayProps) {
   const [configs, setConfigs] = useState({
     difficulty: difficulty.easy,
-    isTimerEnabled: true,
+    isTimerEnable: true,
   });
 
   const [gameState, setGameState] = useState(gameStates.idle);
   const [gameResult, setGameResult] = useState<boolean | null>(null);
 
   const [timer, setTimer] = useState(0);
+
+  function restart() {
+    setGameState(gameStates.idle);
+    setGameResult(null);
+    setTimer(0);
+  }
 
   function startGame() {
     setGameState(gameStates.playing);
@@ -59,17 +65,19 @@ export default function GamePlay(props: GamePlayProps) {
   }
 
   function replay() {
-    window.location.reload();
+    setConfigs({ ...configs });
   }
 
   function setDifficulty(difficulty: difficulty) {
     setConfigs({ ...configs, difficulty });
-
-    console.log(difficulty);
   }
 
   useEffect(() => {
-    if (configs.isTimerEnabled && gameState === gameStates.playing) {
+    restart();
+  }, [configs]);
+
+  useEffect(() => {
+    if (configs.isTimerEnable && gameState === gameStates.playing) {
       const timerId = setInterval(() => {
         setTimer(timer + 1);
       }, 1000);
@@ -103,7 +111,7 @@ export default function GamePlay(props: GamePlayProps) {
         <If condition={gameResult === true}>
           <Popup>
             <Text fontSize="2xl">YOU WIN!</Text>
-            <If condition={configs.isTimerEnabled}>
+            <If condition={configs.isTimerEnable}>
               <Center>
                 <Icon as={FaClock} p="4px" />
                 <Text p={2}>

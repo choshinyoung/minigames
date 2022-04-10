@@ -7,7 +7,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Header from "../../components/Header";
 import Tile from "./Tile";
 import { FaClock, FaFlag } from "react-icons/fa";
@@ -30,22 +30,46 @@ export default function MineSweeper() {
   const smallSize = useWindowSizeValue({ w: 10, h: 10 }, { w: 8, h: 13 });
   const normalSize = useWindowSizeValue({ w: 17, h: 17 }, { w: 14, h: 21 });
 
-  const configs = {
-    size:
-      gamePlayContext.configs.difficulty === difficulty.easy
-        ? smallSize
-        : normalSize,
-    mineCount:
-      gamePlayContext.configs.difficulty === difficulty.easy
-        ? 10
-        : gamePlayContext.configs.difficulty === difficulty.normal
-        ? 30
-        : 50,
-  };
+  const [configs, setConfigs] = useState(createConfigs());
 
   const [map, setMap] = useState<tileData[][]>(generateEmptyMap());
 
   const [mineCount, setMineCount] = useState(0);
+
+  useEffect(() => {
+    restart();
+  }, [gamePlayContext.configs]);
+
+  useEffect(() => {
+    setMap(generateEmptyMap());
+    setMineCount(0);
+  }, [configs]);
+
+  function restart() {
+    setConfigs({ ...createConfigs() });
+  }
+
+  function createConfigs() {
+    return {
+      value: gamePlayContext.configs.difficulty,
+      name:
+        gamePlayContext.configs.difficulty == difficulty.easy
+          ? "easy"
+          : gamePlayContext.configs.difficulty == difficulty.normal
+          ? "normal"
+          : "hard",
+      size:
+        gamePlayContext.configs.difficulty == difficulty.easy
+          ? smallSize
+          : normalSize,
+      mineCount:
+        gamePlayContext.configs.difficulty == difficulty.easy
+          ? 10
+          : gamePlayContext.configs.difficulty == difficulty.normal
+          ? 30
+          : 50,
+    };
+  }
 
   function generateEmptyMap(): tileData[][] {
     return Array(configs.size.h)
