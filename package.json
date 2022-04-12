@@ -1,5 +1,6 @@
 {
   "name": "minigames",
+  "homepage": "https://minigames.shinyou.ng/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
