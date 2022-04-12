@@ -1,20 +1,16 @@
-import {
-  Box,
-  Center,
-  Icon,
-  Select,
-  SimpleGrid,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { Box, Center, Icon, SimpleGrid, Text, VStack } from "@chakra-ui/react";
+import { GamePlayContext } from "../../components/GamePlay";
+import Clock from "../../components/Clock";
+import DifficultySelect from "../../components/DifficultySelect";
+import GameOverPopup from "../../components/GameOverPopup";
 import Header from "../../components/Header";
 import Tile from "./Tile";
+import WinPopup from "../../components/WinPopup";
 import { FaClock, FaFlag } from "react-icons/fa";
-import { GamePlayContext } from "../../components/GamePlay";
+import { useWindowSizeValue } from "../../utils";
 import { gameStates } from "../../lib/gameStates";
 import { difficulty } from "../../lib/difficulty";
-import { useWindowSizeValue } from "../../utils";
 
 export type tileData = {
   x: number;
@@ -32,18 +28,18 @@ export default function MineSweeper() {
 
   const [configs, setConfigs] = useState(createConfigs());
 
-  const [map, setMap] = useState<tileData[][]>(generateEmptyMap());
+  const [map, setMap] = useState<tileData[][]>([]);
 
   const [mineCount, setMineCount] = useState(0);
 
-  useEffect(() => {
-    restart();
-  }, [gamePlayContext.configs]);
+  useEffect(restart, [gamePlayContext.configs]);
 
   useEffect(() => {
     setMap(generateEmptyMap());
     setMineCount(0);
   }, [configs]);
+
+  useEffect(checkIsWon, [map]);
 
   function restart() {
     setConfigs({ ...createConfigs() });
@@ -147,16 +143,6 @@ export default function MineSweeper() {
     return map;
   }
 
-  function renderMap(): tileData[] {
-    let result: tileData[] = [];
-
-    map.forEach((m) => {
-      result = result.concat(m);
-    });
-
-    return result;
-  }
-
   function openTile(x: number, y: number) {
     if (gamePlayContext.gameState === gameStates.ended) {
       return;
@@ -173,7 +159,7 @@ export default function MineSweeper() {
     }
 
     if (newMap[y][x].value === -1) {
-      gamePlayContext.gameOver();
+      gamePlayContext.endGame(false);
     }
 
     const _openTile = (x: number, y: number) => {
@@ -210,14 +196,6 @@ export default function MineSweeper() {
     _openTile(x, y);
 
     setMap([...newMap]);
-
-    if (
-      mineCount === 0 &&
-      getOpenedTilesCount() ===
-        configs.size.w * configs.size.h - configs.mineCount
-    ) {
-      gamePlayContext.win();
-    }
   }
 
   function markTile(x: number, y: number, isMarking: boolean) {
@@ -229,63 +207,71 @@ export default function MineSweeper() {
 
     setMap([...map]);
     setMineCount(mineCount + (isMarking ? -1 : 1));
-
-    if (
-      mineCount === 1 &&
-      getOpenedTilesCount() ===
-        configs.size.w * configs.size.h - configs.mineCount
-    ) {
-      gamePlayContext.win();
-    }
   }
 
-  function getOpenedTilesCount() {
-    let count = 0;
+  function checkIsWon() {
+    let openedTileCount = 0;
 
     map.forEach((row) =>
       row.forEach((tile) => {
-        if (tile.isOpen) {
-          count++;
+        if (tile.isOpen && tile.value !== -1) {
+          openedTileCount++;
         }
       })
     );
 
-    return count;
+    if (
+      mineCount === 0 &&
+      openedTileCount === configs.size.w * configs.size.h - configs.mineCount
+    ) {
+      gamePlayContext.endGame(true);
+    }
   }
 
-  function setDifficulty(selected: any) {
-    gamePlayContext.setDifficulty(selected.target.value);
+  function get1DMap(): tileData[] {
+    let result: tileData[] = [];
+
+    map.forEach((m) => {
+      result = result.concat(m);
+    });
+
+    return result;
   }
 
   return (
-    <Box maxW="550px" w="95vw">
-      <VStack spacing={0}>
-        <Header>
-          <Center w="100px">
-            <Select onChange={setDifficulty}>
-              <option value={difficulty.easy}>easy</option>
-              <option value={difficulty.normal}>normal</option>
-              <option value={difficulty.hard}>hard</option>
-            </Select>
-          </Center>
-          <Center>
-            <Icon as={FaClock} p="4px" />
-            <Text p={2}>
-              {Math.floor(gamePlayContext.timer / 60)} :{" "}
-              {gamePlayContext.timer % 60}
-            </Text>
-          </Center>
-          <Center>
-            <Icon as={FaFlag} p="4px" />
-            <Text p={2}>{mineCount}</Text>
-          </Center>
-        </Header>
-        <SimpleGrid w="100%" columns={configs.size.w} spacing={0.5}>
-          {renderMap().map((tile, i) => (
-            <Tile key={i} tile={tile} openTile={openTile} markTile={markTile} />
-          ))}
-        </SimpleGrid>
-      </VStack>
-    </Box>
+    <>
+      <Box maxW="550px" w="95vw">
+        <VStack spacing={0}>
+          <Header>
+            <DifficultySelect />
+            <Clock />
+            <Center>
+              <Icon as={FaFlag} p="4px" />
+              <Text p={2}>{mineCount}</Text>
+            </Center>
+          </Header>
+          <SimpleGrid w="100%" columns={configs.size.w} spacing={0.5}>
+            {get1DMap().map((tile, i) => (
+              <Tile
+                key={i}
+                tile={tile}
+                openTile={openTile}
+                markTile={markTile}
+              />
+            ))}
+          </SimpleGrid>
+        </VStack>
+      </Box>
+      <WinPopup>
+        <Center>
+          <Icon as={FaClock} p="4px" />
+          <Text p={2}>
+            {Math.floor(gamePlayContext.timer / 60)} :{" "}
+            {gamePlayContext.timer % 60}
+          </Text>
+        </Center>
+      </WinPopup>
+      <GameOverPopup />
+    </>
   );
 }

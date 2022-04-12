@@ -47,7 +47,7 @@ export default function Tile(props: TileProps) {
         <If condition={props.tile.value !== 0}>
           <If condition={props.tile.value !== -1}>
             <Text fontSize="sm">{props.tile.value}</Text>
-            <Icon as={FaBomb} p="4px" />
+            <Icon as={FaBomb} p="5px" />
           </If>
         </If>
       </AspectRatio>
@@ -58,7 +58,7 @@ export default function Tile(props: TileProps) {
           cursor="pointer"
           onContextMenu={toggleIsMarked}
         >
-          <Icon as={FaFlag} color="teal.400" p="4px" />
+          <Icon as={FaFlag} color="teal.400" p="5px" />
         </AspectRatio>
         <AspectRatio
           bgColor={useColorModeValue("blackAlpha.300", "blackAlpha.400")}

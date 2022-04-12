@@ -1,5 +1,5 @@
-import { Divider, SimpleGrid, VStack } from "@chakra-ui/react";
 import React from "react";
+import { Divider, SimpleGrid, VStack } from "@chakra-ui/react";
 
 type HeaderProps = {
   children: React.ReactNode;

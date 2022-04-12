@@ -9,13 +9,12 @@ export default function Popup(props: PopupProps) {
   return (
     <Box
       w="250px"
-      padding={0}
+      p={3}
       bgColor={useColorModeValue("blackAlpha.200", "blackAlpha.500")}
       backdropFilter="auto"
       backdropBlur="2px"
       borderRadius={5}
       position="absolute"
-      p={3}
     >
       {props.children}
     </Box>

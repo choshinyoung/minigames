@@ -1,8 +1,6 @@
 import { Center, Wrap } from "@chakra-ui/react";
-
-import MinigameListItem from "./MinigameListItem";
-
 import { minigames } from "../minigames";
+import MinigameListItem from "./MinigameListItem";
 
 export default function MinigameList() {
   return (
