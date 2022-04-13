@@ -7,7 +7,7 @@ import GameOverPopup from "../../components/GameOverPopup";
 import Header from "../../components/Header";
 import Tile from "./Tile";
 import WinPopup from "../../components/WinPopup";
-import { FaClock, FaFlag } from "react-icons/fa";
+import { FaFlag } from "react-icons/fa";
 import { useWindowSizeValue } from "../../utils";
 import { gameStates } from "../../lib/gameStates";
 import { difficulty } from "../../lib/difficulty";
@@ -263,13 +263,7 @@ export default function MineSweeper() {
         </VStack>
       </Box>
       <WinPopup>
-        <Center>
-          <Icon as={FaClock} p="4px" />
-          <Text p={2}>
-            {Math.floor(gamePlayContext.timer / 60).toLocaleString('ko-KR', { minimumIntegerDigits: 2 })} :{" "}
-            {(gamePlayContext.timer % 60).toLocaleString('ko-KR', { minimumIntegerDigits: 2 })}
-          </Text>
-        </Center>
+        <Clock />
       </WinPopup>
       <GameOverPopup />
     </>
