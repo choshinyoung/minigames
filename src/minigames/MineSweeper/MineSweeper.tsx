@@ -266,8 +266,8 @@ export default function MineSweeper() {
         <Center>
           <Icon as={FaClock} p="4px" />
           <Text p={2}>
-            {Math.floor(gamePlayContext.timer / 60)} :{" "}
-            {gamePlayContext.timer % 60}
+            {Math.floor(gamePlayContext.timer / 60).toLocaleString('ko-KR', { minimumIntegerDigits: 2 })} :{" "}
+            {(gamePlayContext.timer % 60).toLocaleString('ko-KR', { minimumIntegerDigits: 2 })}
           </Text>
         </Center>
       </WinPopup>
