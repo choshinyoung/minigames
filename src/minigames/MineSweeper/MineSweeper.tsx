@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Box, Center, Icon, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { GamePlayContext } from "../../components/GamePlay";
 import Clock from "../../components/Clock";
-import DifficultySelect from "../../components/DifficultySelect";
+import DifficultySelector from "../../components/DifficultySelector";
 import GameOverPopup from "../../components/GameOverPopup";
 import Header from "../../components/Header";
 import Tile from "./Tile";
@@ -48,12 +48,6 @@ export default function MineSweeper() {
   function createConfigs() {
     return {
       value: gamePlayContext.configs.difficulty,
-      name:
-        gamePlayContext.configs.difficulty == difficulty.easy
-          ? "easy"
-          : gamePlayContext.configs.difficulty == difficulty.normal
-          ? "normal"
-          : "hard",
       size:
         gamePlayContext.configs.difficulty == difficulty.easy
           ? smallSize
@@ -243,7 +237,7 @@ export default function MineSweeper() {
       <Box maxW="550px" w="95vw">
         <VStack spacing={0}>
           <Header>
-            <DifficultySelect />
+            <DifficultySelector />
             <Clock />
             <Center>
               <Icon as={FaFlag} p="4px" />
